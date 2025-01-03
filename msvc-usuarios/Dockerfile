@@ -1,8 +1,8 @@
 ## OPTIMIZAR DOCKERFILE
 
 #Como da problemas cuando compilamos por el hecho de si tocamos codigo tenga que generar todo de nuevo, lo que hacemos es:
-# desde donde es el jdk que encontramos en dockhub
-FROM openjdk:17
+# desde donde es el jdk que encontramos en dockhub en este caso ponemos alpine que es mas liviano de linux
+FROM openjdk:17-jdk-alpine AS builder
 
 # la ruta de trabajo, ahora queremos meter a msvc-usuarios
 WORKDIR /app/msvc-usuarios
@@ -27,12 +27,19 @@ COPY ./msvc-usuarios/src ./src
 #Ahora tenemos que compilar saltando el test
 RUN ./mvnw clean package -DskipTests
 
+#El from llega hasta aqui para construir la imagen, ahora creamos otro ( otro constructor )
+FROM openjdk:17-jdk-alpine
+
+WORKDIR /app
+
+#Indicamos que copiamos, en este caso es el builder que le dimos mas arriba, la ubicacion y donde se va a copiar en este caso app
+COPY --from=builder /app/msvc-usuarios/target/msvc-usuarios-0.0.1-SNAPSHOT.jar .
+
 # Es el puerto donde tenemos configurado en la aplicación
 EXPOSE 8001
 
 # el directorio de trabajo, como se levantaria normalmente como en CMD
-#Ahora le indicamos que el jar se va  encontrar en el target
-ENTRYPOINT ["java", "-jar", "./target/msvc-usuarios-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "msvc-usuarios-0.0.1-SNAPSHOT.jar"]
 
 # RECORDAR MUY BIEN EL TEMA DE VERSION HAY QUE TENER BIEN CONFIGURADO Y NO CONFUNDIR CON OTRA VERSION
 
