@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 //tienen que ser identico que el micro que queremos, lo tenemos en application.properties
 //la url tiene que ser la ruta de donde tenemos el micro levantado en application.properties en port lo tenemos
-@FeignClient(name = "msvc-usuarios", url = "localhost:8001")
+// ahora hemos cambiado el localhost por msvc-usuarios
+@FeignClient(name = "msvc-usuarios", url = "msvc-usuarios:8001")
 public interface UsuarioClientRest {
 
     //tenemos que poner la ruta igual que la que tenemos en el controller del micro Usuarios
