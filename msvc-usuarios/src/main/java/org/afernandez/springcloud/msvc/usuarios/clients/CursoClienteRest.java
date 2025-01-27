@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 //he reemplazado el host.docker.internal para que se comunique mediante red
-@FeignClient(name = "msvc-cursos", url = "msvc-cursos:8002")
+@FeignClient(name = "msvc-cursos", url = "${msvc.cursos.url}")
 public interface CursoClienteRest {
 
     @DeleteMapping("/eliminar-curso-usuario/{id}")
