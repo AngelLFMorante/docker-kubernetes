@@ -1,0 +1,63 @@
+#Aqui definimos los contenedores, etc
+version: "3.9" #No es la version de docker, es la version de docker compose esto afecta a lo que vayamos a utilizar podemos mirar en la documentacion
+services:
+  #Estas configuraciones las tenemos en docker
+  mysql8:
+    image: mysql:8
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: sasa
+      MYSQL_DATABASE: msvc_usuarios
+    volumes:
+      - data-mysql:/var/lib/mysql
+    restart: always
+    #La red se crea automatica aunque tambien podemos crear un network
+    networks:
+      - spring
+  postgres14:
+    image: postgres:14-alpine
+    ports:
+      - "5532:5432"
+    environment:
+      POSTGRES_PASSWORD: sasa
+      POSTGRES_DB: msvc_cursos
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - spring
+
+  msvc-usuarios:
+    image: usuarios:latest
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./msvc-usuarios/.env
+    networks:
+      - spring
+    #Depende de la base datos por eso va el primero
+    depends_on:
+      - mysql8
+    restart: always
+
+  msvc-cursos:
+    image: cursos:latest
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./msvc-cursos/.env
+    networks:
+      - spring
+    depends_on:
+      - postgres14
+    restart: always
+
+#Aqui se define los volumenes
+volumes:
+  data-mysql:
+  data-postgres:
+
+#Aqui definimos las redes en el caso que queramos
+networks:
+  spring:
