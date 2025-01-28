@@ -32,6 +32,10 @@ services:
 
   msvc-usuarios:
     container_name: msvc-usuarios
+    #Para construir
+    build:
+      context: ./
+      dockerfile: ./msvc-usuarios/Dockerfile
     image: usuarios:latest
     ports:
       - "8001:8001"
@@ -46,6 +50,9 @@ services:
 
   msvc-cursos:
     container_name: msvc-cursos
+    build:
+      context: ./
+      dockerfile: ./msvc-cursos/Dockerfile
     image: cursos:latest
     ports:
       - "8002:8002"
@@ -55,6 +62,7 @@ services:
       - spring
     depends_on:
       - postgres14
+      - msvc-usuarios
     restart: always
 
 #Aqui se define los volumenes, si ya existe algun volumen solo tenemos que indicar el name y poner el volumen.
